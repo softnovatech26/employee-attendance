@@ -1,11 +1,14 @@
 function App() {
   return (
-    <div className="min-h-screen bg-blue-600 flex items-center justify-center">
-      <h1 className="text-white text-5xl font-bold">
+    <div className="min-h-screen flex items-center justify-center">
+      <h1 className=" text-5xl font-bold">
         Employee Attendance System
       </h1>
+
+      <h1>Hassan Ahmed</h1>
     </div>
+
   )
 }
 
-export default App
+export default App;

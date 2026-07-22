@@ -1,3 +1,17 @@
+/* @layer base {
+  body {
+    background-color: #000000;
+    background-image: radial-gradient(
+      circle at 20% 10%,
+      rgba(220, 38, 38, 0.12),
+      transparent 55%
+    );
+    background-repeat: no-repeat;
+    color: #e4e4e7;
+    min-height: 100vh;
+  }
+} */
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

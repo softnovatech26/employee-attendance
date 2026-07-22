@@ -21,9 +21,9 @@ const features = [
 
 const Footer = () => {
   return (
-    <footer className="border-t border-neutral-800 bg-gradient-to-b from-[#0f0f10] via-[#151515] to-black">
+    <footer className="w-full relative mt-16 bg-gradient-to-b from-[#0f0f10] via-[#151515] to-black">
       
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_70%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08)_0%,transparent_60%)]"></div>
 
       <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
         {/* Top */}
@@ -59,7 +59,7 @@ const Footer = () => {
           </div>
 
           {/* Right */}
-          <div className="lg:pl-20">
+          <div className="lg:pl-20 sm:pt-3 lg:pt-0">
             <h3 className="text-2xl font-semibold text-white">
               System Features
             </h3>

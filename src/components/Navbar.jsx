@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "../assets/images/SoftNova-Logo.png";
@@ -27,14 +28,16 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
+
+  const navigate = useNavigate();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-2 border-red-900 bg-black">
       <nav
         aria-label="Main navigation"
-        className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-2"
-      >
+        className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-2" >
         {/* Brand */}
         <a href="/" className="flex flex-shrink-0 items-center gap-2">
           <img src={Logo} alt="SoftNova HR" className="h-9 w-auto select-none" />
@@ -59,15 +62,15 @@ export default function Navbar() {
         {/* Desktop auth buttons */}
         <div className="hidden flex-shrink-0 items-center gap-3 md:flex">
           <button
+            onClick={() => navigate("/register")}
             type="button"
-            className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          >
+            className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black" >
             Register
           </button>
           <button
+            onClick={() => navigate("/login")}
             type="button"
-            className="rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-          >
+            className="rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black" >
             Login
           </button>
         </div>
@@ -78,8 +81,7 @@ export default function Navbar() {
           onClick={() => setIsMenuOpen((open) => !open)}
           className="rounded-md p-1 text-white md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen}
-        >
+          aria-expanded={isMenuOpen} >
           {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
       </nav>
@@ -93,23 +95,22 @@ export default function Navbar() {
                 key={label}
                 href={href}
                 onClick={() => setIsMenuOpen(false)}
-                className={`text-base font-medium ${color}`}
-              >
+                className={`text-base font-medium ${color}`} >
                 {label}
               </a>
             ))}
           </div>
           <div className="mt-5 flex gap-3">
             <button
+              onClick={() => navigate("/register")}
               type="button"
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700"
-            >
+              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700" >
               Register
             </button>
-            <button
+            <button 
+              onClick={() => navigate("/login")}
               type="button"
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700"
-            >
+              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700" >
               Login
             </button>
           </div>

@@ -1,118 +1,138 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Logo from "../assets/images/SoftNova-Logo.png";
 
-/**
- * Navbar — SoftNova HR
- * ---------------------------------------------------------------
- * A responsive, accessible top navigation bar built with React
- * and Tailwind CSS, matching the SoftNova HR brand.
- *
- * Setup:
- *  - Save the provided SoftNova-Logo.png into src/assets/images/
- *    (same folder this import points to). If you place it
- *    somewhere else, just update the import path below to match.
- *
- * Customize:
- *  - NAV_LINKS: update label/href for each navigation item.
- *  - Replace the two <button> handlers with your auth routes
- *    (e.g. onClick={() => navigate("/login")}) or swap the
- *    <button> tags for <Link> if you're using React Router.
- * ---------------------------------------------------------------
- */
-
 const NAV_LINKS = [
-  { label: "Home", href: "#", color: "text-gray-300 hover:text-white" },
-  { label: "System Guide", href: "#", color: "text-gray-300 hover:text-white" },
+  { label: "Home", href: "/" },
+  { label: "System Guide", href: "#features" },
 ];
 
 export default function Navbar() {
-
   const navigate = useNavigate();
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b-2 border-red-900 bg-black">
-      <nav
-        aria-label="Main navigation"
-        className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-2" >
-        {/* Brand */}
-        <a href="/" className="flex flex-shrink-0 items-center gap-2">
-          <img src={Logo} alt="SoftNova HR" className="h-9 w-auto select-none" />
-          <span className="text-xl font-extrabold tracking-tight sm:text-2xl">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/95 backdrop-blur-md">
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+
+        {/* Logo */}
+        <a
+          href="/"
+          className="flex items-center gap-2.5"
+          onClick={closeMenu}
+        >
+          <img
+            src={Logo}
+            alt="SoftNova HR"
+            className="h-9 w-auto object-contain"
+          />
+
+          <span className="text-xl font-bold tracking-tight">
             <span className="text-red-500">SoftNova</span>{" "}
             <span className="text-white">HR</span>
           </span>
         </a>
 
-        {/* Desktop links */}
-        <div className="hidden flex-1 items-center justify-center gap-10 md:flex">
-          {NAV_LINKS.map(({ label, href, color }) => (
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center gap-10">
+          {NAV_LINKS.map((link) => (
             <a
-              key={label}
-              href={href}
-              className={`text-sm transition-colors duration-150 ${color}`} >
-              {label}
+              key={link.label}
+              href={link.href}
+              className="relative text-sm font-medium text-gray-400 transition-colors duration-300 hover:text-white"
+            >
+              {link.label}
             </a>
           ))}
         </div>
 
-        {/* Desktop auth buttons */}
-        <div className="hidden flex-shrink-0 items-center gap-3 md:flex">
+        {/* Desktop Buttons */}
+        <div className="hidden md:flex items-center gap-3">
+
           <button
-            onClick={() => navigate("/register")}
             type="button"
-            className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black" >
+            onClick={() => navigate("/register")}
+            className="rounded-lg border border-gray-700 px-5 py-2 text-sm font-semibold text-gray-300 transition-all duration-300 hover:border-red-500 hover:text-white"
+          >
             Register
           </button>
+
           <button
-            onClick={() => navigate("/login")}
             type="button"
-            className="rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black" >
+            onClick={() => navigate("/login")}
+            className="rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-red-600/10 transition-all duration-300 hover:bg-red-700 hover:-translate-y-0.5"
+          >
             Login
           </button>
+
         </div>
 
-        {/* Mobile toggle */}
+        {/* Mobile Menu Button */}
         <button
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
-          className="rounded-md p-1 text-white md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+          className="rounded-lg border border-gray-800 p-2 text-gray-300 transition hover:border-red-500 hover:text-white md:hidden"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen} >
-          {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
+          aria-expanded={isMenuOpen}
+        >
+          {isMenuOpen ? <X size={23} /> : <Menu size={23} />}
         </button>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="border-t border-red-900 bg-black px-4 pb-5 pt-4 md:hidden">
-          <div className="flex gap-4">
-            {NAV_LINKS.map(({ label, href, color }) => (
-              <a
-                key={label}
-                href={href}
-                onClick={() => setIsMenuOpen(false)}
-                className={`text-base font-medium ${color}`} >
-                {label}
-              </a>
-            ))}
-          </div>
-          <div className="mt-5 flex gap-3">
-            <button
-              onClick={() => navigate("/register")}
-              type="button"
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700" >
-              Register
-            </button>
-            <button 
-              onClick={() => navigate("/login")}
-              type="button"
-              className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-red-700" >
-              Login
-            </button>
+        <div className="border-t border-gray-800 bg-black md:hidden">
+
+          <div className="px-5 py-5 sm:px-8">
+
+            {/* Mobile Links */}
+            <div className="flex flex-col gap-1">
+
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={closeMenu}
+                  className="rounded-lg px-3 py-3 text-sm font-medium text-gray-400 transition-colors hover:bg-red-500/10 hover:text-white"
+                >
+                  {link.label}
+                </a>
+              ))}
+
+            </div>
+
+            {/* Mobile Buttons */}
+            <div className="mt-5 grid grid-cols-2 gap-3">
+
+              <button
+                type="button"
+                onClick={() => {
+                  navigate("/register");
+                  closeMenu();
+                }}
+                className="rounded-lg border border-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:border-red-500 hover:text-white"
+              >
+                Register
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  navigate("/login");
+                  closeMenu();
+                }}
+                className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
+              >
+                Login
+              </button>
+
+            </div>
+
           </div>
         </div>
       )}

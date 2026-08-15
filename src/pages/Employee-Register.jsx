@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import {
   User,
   GraduationCap,
@@ -8,14 +9,9 @@ import {
   EyeOff,
   Loader2,
   CheckCircle2,
+  UserPlus,
 } from "lucide-react";
 
-/**
- * EmployeeRegisterForm
- * Self-contained, validated employee registration form.
- * Wire `onRegister` to your real API call — it receives the form
- * values only after all client-side validation passes.
- */
 export default function EmployeeRegisterForm({
   onRegister = () => {},
   onLoginClick = () => {},
@@ -26,6 +22,7 @@ export default function EmployeeRegisterForm({
     email: "",
     password: "",
   });
+
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -38,18 +35,27 @@ export default function EmployeeRegisterForm({
         if (!value.trim()) return "Full name is required";
         if (value.trim().length < 2) return "Name looks too short";
         return "";
+
       case "department":
-        if (!value.trim()) return "Course name or department is required";
+        if (!value.trim()) {
+          return "Course name or department is required";
+        }
         return "";
+
       case "email":
         if (!value.trim()) return "Email is required";
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           return "Enter a valid email address";
+        }
+
         return "";
+
       case "password":
         if (!value) return "Password is required";
         if (value.length < 6) return "Use at least 6 characters";
         return "";
+
       default:
         return "";
     }
@@ -57,34 +63,65 @@ export default function EmployeeRegisterForm({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
     if (touched[name]) {
-      setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: validateField(name, value),
+      }));
     }
   };
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-    setTouched((prev) => ({ ...prev, [name]: true }));
-    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+
+    setTouched((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: validateField(name, value),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      const err = validateField(key, formData[key]);
-      if (err) newErrors[key] = err;
-    });
-    setErrors(newErrors);
-    setTouched({ fullName: true, department: true, email: true, password: true });
 
-    if (Object.keys(newErrors).length > 0) return;
+    Object.keys(formData).forEach((key) => {
+      const error = validateField(key, formData[key]);
+
+      if (error) {
+        newErrors[key] = error;
+      }
+    });
+
+    setErrors(newErrors);
+
+    setTouched({
+      fullName: true,
+      department: true,
+      email: true,
+      password: true,
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
 
     setIsSubmitting(true);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200)); // simulate network request
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
       onRegister(formData);
       setIsSuccess(true);
     } finally {
@@ -93,131 +130,270 @@ export default function EmployeeRegisterForm({
   };
 
   const resetForm = () => {
-    setFormData({ fullName: "", department: "", email: "", password: "" });
+    setFormData({
+      fullName: "",
+      department: "",
+      email: "",
+      password: "",
+    });
+
     setErrors({});
     setTouched({});
     setIsSuccess(false);
   };
 
   const fields = [
-    { name: "fullName", label: "Full Name", type: "text", icon: User, autoComplete: "name" },
-    { name: "department", label: "Course Name or Department", type: "text", icon: GraduationCap, autoComplete: "organization-title" },
-    { name: "email", label: "Email", type: "email", icon: Mail, autoComplete: "email" },
-    { name: "password", label: "Password", type: showPassword ? "text" : "password", icon: Lock, autoComplete: "new-password", isPassword: true },
+    {
+      name: "fullName",
+      label: "Full Name",
+      placeholder: "Enter employee name",
+      type: "text",
+      icon: User,
+      autoComplete: "name",
+    },
+    {
+      name: "department",
+      label: "Course or Department",
+      placeholder: "Enter course or department",
+      type: "text",
+      icon: GraduationCap,
+      autoComplete: "organization-title",
+    },
+    {
+      name: "email",
+      label: "Email Address",
+      placeholder: "employee@example.com",
+      type: "email",
+      icon: Mail,
+      autoComplete: "email",
+    },
+    {
+      name: "password",
+      label: "Password",
+      placeholder: "Create a password",
+      type: showPassword ? "text" : "password",
+      icon: Lock,
+      autoComplete: "new-password",
+      isPassword: true,
+    },
   ];
 
   return (
-    <div className="min-h-screen w-full bg-black flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl p-8 sm:p-10">
-          {isSuccess ? (
-            <div className="flex flex-col items-center text-center py-6">
-              <div className="w-14 h-14 rounded-full bg-red-950 flex items-center justify-center mb-5">
-                <CheckCircle2 className="w-7 h-7 text-red-500" />
-              </div>
-              <h2 className="text-xl font-bold text-white mb-2">Registration successful</h2>
-              <p className="text-zinc-400 text-sm mb-8">
-                {formData.fullName.split(" ")[0] || "Employee"}'s account has been created.
-              </p>
-              <button
-                onClick={resetForm}
-                className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-medium py-3 rounded-lg transition-colors duration-200"
-              >
-                Register another employee
-              </button>
+    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+
+      {/* Background Glow */}
+      <div className="pointer-events-none absolute left-1/2 top-16 h-80 w-80 -translate-x-1/2 rounded-full bg-red-600/10 blur-[120px]" />
+
+      <div className="relative flex min-h-screen items-center justify-center px-5 py-16">
+
+        <div className="w-full max-w-md">
+
+          {/* Header */}
+          <div className="mb-8 text-center">
+
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-red-500/30 bg-red-500/10 shadow-lg shadow-red-600/10">
+              <UserPlus className="h-7 w-7 text-red-500" />
             </div>
-          ) : (
-            <>
-              <h1 className="text-3xl font-extrabold text-red-500 mb-8">
-                Employee Register
-              </h1>
 
-              <form onSubmit={handleSubmit} noValidate className="space-y-4">
-                {fields.map((field) => {
-                  const Icon = field.icon;
-                  const hasError = Boolean(errors[field.name]) && touched[field.name];
+            <h1 className="text-3xl font-bold tracking-tight">
+              Create Your{" "}
+              <span className="text-red-500">
+                Account
+              </span>
+            </h1>
 
-                  return (
-                    <div key={field.name}>
-                      <label htmlFor={field.name} className="sr-only">
-                        {field.label}
-                      </label>
-                      <div className="relative">
-                        <Icon className="w-4 h-4 text-zinc-600 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                          id={field.name}
-                          name={field.name}
-                          type={field.type}
-                          autoComplete={field.autoComplete}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          placeholder={field.label}
-                          aria-invalid={hasError}
-                          aria-describedby={hasError ? `${field.name}-error` : undefined}
-                          className={`w-full bg-black text-white placeholder-slate-500 rounded-lg py-3 pl-11 ${
-                            field.isPassword ? "pr-11" : "pr-4"
-                          } border outline-none transition-colors duration-200 ${
-                            hasError
-                              ? "border-red-500"
-                              : "border-zinc-800 focus:border-red-500"
-                          }`}
-                        />
-                        {field.isPassword && (
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword((v) => !v)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-300 transition-colors duration-200"
-                            aria-label={showPassword ? "Hide password" : "Show password"}
-                            tabIndex={-1}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </button>
-                        )}
-                      </div>
-                      {hasError && (
-                        <p id={`${field.name}-error`} className="mt-1.5 text-xs text-red-400 pl-1">
-                          {errors[field.name]}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
+            <p className="mt-3 text-sm text-gray-500">
+              Register as an employee to get started
+            </p>
+
+          </div>
+
+          {/* Register Card */}
+          <div className="rounded-2xl border border-gray-800 bg-gray-950 p-6 shadow-2xl sm:p-8">
+
+            {isSuccess ? (
+              <div className="py-8 text-center">
+
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
+                  <CheckCircle2 className="h-8 w-8 text-red-500" />
+                </div>
+
+                <h2 className="text-2xl font-bold">
+                  Registration Successful
+                </h2>
+
+                <p className="mt-3 text-sm leading-6 text-gray-500">
+                  Welcome{" "}
+                  <span className="text-gray-300">
+                    {formData.fullName}
+                  </span>
+                  . Your employee account has been created successfully.
+                </p>
 
                 <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-red-500 hover:bg-red-600 disabled:bg-red-900 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  type="button"
+                  onClick={resetForm}
+                  className="mt-8 w-full rounded-xl border border-gray-700 bg-gray-900 py-3 text-sm font-semibold text-gray-300 transition-all duration-300 hover:border-red-500 hover:text-white"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Registering...
-                    </>
-                  ) : (
-                    "Register"
-                  )}
+                  Register Another Employee
                 </button>
-              </form>
 
-              <p className="text-center text-zinc-400 text-sm mt-6">
-                Already have an account?
-              </p>
-              <button
-                type="button"
-                onClick={onLoginClick}
-                className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-medium py-3 rounded-lg transition-colors duration-200 mt-3"
-              >
-                Login
-              </button>
-            </>
-          )}
+              </div>
+            ) : (
+              <>
+                {/* Card Heading */}
+                <div className="mb-7">
+                  <h2 className="text-xl font-semibold">
+                    Employee Registration
+                  </h2>
+
+                  <p className="mt-1 text-sm text-gray-500">
+                    Enter your information below.
+                  </p>
+                </div>
+
+                <form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  className="space-y-5"
+                >
+
+                  {fields.map((field) => {
+                    const Icon = field.icon;
+
+                    const hasError =
+                      Boolean(errors[field.name]) &&
+                      touched[field.name];
+
+                    return (
+                      <div key={field.name}>
+
+                        <label
+                          htmlFor={field.name}
+                          className="mb-2 block text-sm font-medium text-gray-300"
+                        >
+                          {field.label}
+                        </label>
+
+                        <div className="relative">
+
+                          <Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600" />
+
+                          <input
+                            id={field.name}
+                            name={field.name}
+                            type={field.type}
+                            autoComplete={field.autoComplete}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            placeholder={field.placeholder}
+                            aria-invalid={hasError}
+                            aria-describedby={
+                              hasError
+                                ? `${field.name}-error`
+                                : undefined
+                            }
+                            className={`w-full rounded-xl border bg-black py-3.5 pl-11 text-sm text-white outline-none transition-all duration-300 placeholder:text-gray-700 ${
+                              field.isPassword
+                                ? "pr-12"
+                                : "pr-4"
+                            } ${
+                              hasError
+                                ? "border-red-500"
+                                : "border-gray-800 focus:border-red-500"
+                            }`}
+                          />
+
+                          {field.isPassword && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setShowPassword((value) => !value)
+                              }
+                              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 transition hover:text-gray-300"
+                              aria-label={
+                                showPassword
+                                  ? "Hide password"
+                                  : "Show password"
+                              }
+                            >
+                              {showPassword ? (
+                                <EyeOff className="h-4 w-4" />
+                              ) : (
+                                <Eye className="h-4 w-4" />
+                              )}
+                            </button>
+                          )}
+
+                        </div>
+
+                        {hasError && (
+                          <p
+                            id={`${field.name}-error`}
+                            className="mt-2 pl-1 text-xs text-red-400"
+                          >
+                            {errors[field.name]}
+                          </p>
+                        )}
+
+                      </div>
+                    );
+                  })}
+
+                  {/* Register Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-red-600/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" />
+                        Create Account
+                      </>
+                    )}
+                  </button>
+
+                </form>
+
+                {/* Login */}
+                <div className="mt-7 text-center">
+
+                  <p className="text-sm text-gray-500">
+                    Already have an account?
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={onLoginClick}
+                    className="mt-3 w-full rounded-xl border border-gray-700 bg-gray-900 py-3 text-sm font-semibold text-gray-300 transition-all duration-300 hover:border-red-500 hover:bg-red-500/5 hover:text-white"
+                  >
+                    Login to Your Account
+                  </button>
+
+                </div>
+              </>
+            )}
+
+          </div>
+
+          {/* Bottom Text */}
+          <p className="mt-6 text-center text-xs text-gray-700">
+            Secure employee attendance management
+          </p>
+
         </div>
       </div>
     </div>
   );
 }
+EmployeeRegisterForm.propTypes = {
+  onRegister: PropTypes.func,
+  onLoginClick: PropTypes.func,
+};
